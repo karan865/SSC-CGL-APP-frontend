@@ -226,7 +226,13 @@ export const SubjectsScreen: React.FC<SubjectsScreenProps> = ({ navigation }) =>
   };
 
   if (loading && !refreshing) {
-    return <LoadingView message="Connecting to SSC CGL Question Bank..." />;
+    return (
+      <LoadingView
+        title="Warming Up Study Arena"
+        message="Connecting to live cloud question bank & mock engine..."
+        isWarmup={true}
+      />
+    );
   }
 
   if (error && subjects.length === 0) {

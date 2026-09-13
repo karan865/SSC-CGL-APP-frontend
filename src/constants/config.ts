@@ -44,6 +44,6 @@ export const setApiBaseUrl = (url: string) => {
 
 export const APP_CONFIG = {
   appName: 'SSC CGL Practice',
-  apiTimeoutMs: 15000,
+  apiTimeoutMs: 45000,
 };
 

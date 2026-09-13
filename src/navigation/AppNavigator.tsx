@@ -2,6 +2,7 @@ import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { RootStackParamList } from './types';
 import { SplashScreen } from '../screens/SplashScreen';
+import { OnboardingScreen } from '../screens/OnboardingScreen';
 import { SubjectsScreen } from '../screens/SubjectsScreen';
 import { TopicsScreen } from '../screens/TopicsScreen';
 import { DifficultyScreen } from '../screens/DifficultyScreen';
@@ -35,6 +36,11 @@ export const AppNavigator: React.FC = () => {
       <Stack.Screen
         name="Splash"
         component={SplashScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="Onboarding"
+        component={OnboardingScreen}
         options={{ headerShown: false }}
       />
       <Stack.Screen

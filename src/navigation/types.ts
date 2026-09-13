@@ -4,6 +4,7 @@ import { MockStartResponse, MockScoreSummary } from '../types/mockTest';
 
 export type RootStackParamList = {
   Splash: undefined;
+  Onboarding: undefined;
   Subjects: undefined;
   Topics: {
     subjectId: string;
@@ -40,6 +41,7 @@ export type RootStackParamList = {
 };
 
 export type SplashScreenProps = NativeStackScreenProps<RootStackParamList, 'Splash'>;
+export type OnboardingScreenProps = NativeStackScreenProps<RootStackParamList, 'Onboarding'>;
 export type SubjectsScreenProps = NativeStackScreenProps<RootStackParamList, 'Subjects'>;
 export type TopicsScreenProps = NativeStackScreenProps<RootStackParamList, 'Topics'>;
 export type DifficultyScreenProps = NativeStackScreenProps<RootStackParamList, 'Difficulty'>;

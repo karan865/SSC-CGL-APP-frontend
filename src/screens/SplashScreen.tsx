@@ -2,12 +2,16 @@ import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator, StatusBar } from 'react-native';
 import { SplashScreenProps } from '../navigation/types';
 import { APP_CONFIG } from '../constants/config';
+import { serverWakeupService } from '../services/serverWakeupService';
 
 export const SplashScreen: React.FC<SplashScreenProps> = ({ navigation }) => {
   useEffect(() => {
+    // Fire silent background wakeup immediately upon cold app launch
+    serverWakeupService.startWakeup();
+
     const timer = setTimeout(() => {
-      navigation.replace('Subjects');
-    }, 1500);
+      navigation.replace('Onboarding');
+    }, 1200);
 
     return () => clearTimeout(timer);
   }, [navigation]);
