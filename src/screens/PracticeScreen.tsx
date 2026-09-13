@@ -192,14 +192,34 @@ export const PracticeScreen: React.FC<PracticeScreenProps> = ({
   }
 
   if (error || questions.length === 0) {
+    const isInventoryNotice = error?.includes('Not enough questions') || error?.includes('available');
     return (
       <View style={styles.screenRoot}>
         <View style={styles.errorWrapper}>
           <ErrorView
-            message={error || 'Unable to start test session.'}
-            onRetry={startTest}
-            retryTitle="Retry Loading Test"
+            message={
+              isInventoryNotice
+                ? `Notice\n\nNot enough questions available for this specific difficulty level.\n\nPlease select another difficulty (Easy / Medium / Hard) or try another topic to continue practicing.`
+                : (error || 'Unable to start test session.')
+            }
+            onRetry={() => {
+              if (isInventoryNotice) {
+                navigation.goBack();
+              } else {
+                startTest();
+              }
+            }}
+            retryTitle={isInventoryNotice ? '← Choose Another Level' : 'Retry Loading Test'}
           />
+          {isInventoryNotice && (
+            <TouchableOpacity
+              style={styles.retrySecondaryBtn}
+              onPress={startTest}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.retrySecondaryBtnText}>Retry Anyway</Text>
+            </TouchableOpacity>
+          )}
         </View>
       </View>
     );
@@ -414,6 +434,21 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     justifyContent: 'center',
+    alignItems: 'center',
+  },
+  retrySecondaryBtn: {
+    marginTop: 12,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    backgroundColor: '#f1f5f9',
+    borderWidth: 1,
+    borderColor: '#cbd5e1',
+  },
+  retrySecondaryBtnText: {
+    color: '#475569',
+    fontSize: 14,
+    fontWeight: '600',
   },
   topBar: {
     backgroundColor: '#0f172a',
