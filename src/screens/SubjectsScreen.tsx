@@ -1214,18 +1214,25 @@ export const SubjectsScreen: React.FC<SubjectsScreenProps> = ({ navigation }) =>
 
                 // Derive stage label generically from paper or stage data
                 let stageLabel = 'General';
+                let stageBgColor = '#ffffff';
+                
+                const stageKey = getSubjectStageKey(subject);
+                const stageConfig = activeExam.stages.find(st => st.key === stageKey);
+                
+                if (stageConfig) {
+                  stageBgColor = stageConfig.badgeColor + '08'; // 5% opacity tint
+                }
+
                 if (typeof subject.paperId === 'object' && subject.paperId) {
                   stageLabel = subject.paperId.name;
-                } else {
-                  const stageKey = getSubjectStageKey(subject);
-                  const stageConfig = activeExam.stages.find(st => st.key === stageKey);
-                  if (stageConfig) stageLabel = stageConfig.label.replace(/^[^\w]*\s*/, '');
+                } else if (stageConfig) {
+                  stageLabel = stageConfig.label.replace(/^[^\w]*\s*/, '');
                 }
 
                 return (
                   <TouchableOpacity
                     key={subject._id}
-                    style={[styles.subjectCard, { borderLeftColor: meta.color }]}
+                    style={[styles.subjectCard, { borderLeftColor: meta.color, backgroundColor: stageBgColor }]}
                     onPress={() => handleSelectSubject(subject)}
                     activeOpacity={0.75}
                   >
