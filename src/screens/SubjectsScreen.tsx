@@ -271,6 +271,24 @@ const getDefaultMeta = (examName: string): SubjectMeta => ({
   tagline: `Essential syllabus module aligned with latest ${examName} pattern`,
 });
 
+/**
+ * Curated color palette for paper groups.
+ * Each paper within a stage gets a unique color from this palette
+ * based on its index position. This ensures visual distinction
+ * between GS-1 vs GS-2, Paper I vs Paper II, Tier 1 vs Tier 2, etc.
+ * Works generically for ALL exams — no exam-specific code needed.
+ */
+const PAPER_GROUP_COLORS: { color: string; bgLight: string; bgTint: string }[] = [
+  { color: '#059669', bgLight: '#ecfdf5', bgTint: '#05966918' },  // Emerald  — GS-1 / Tier 1 / Paper 1
+  { color: '#7c3aed', bgLight: '#f5f3ff', bgTint: '#7c3aed18' },  // Violet   — GS-2 / Tier 2 / Paper 2
+  { color: '#0284c7', bgLight: '#e0f2fe', bgTint: '#0284c718' },  // Sky      — Paper 3
+  { color: '#ea580c', bgLight: '#fff7ed', bgTint: '#ea580c18' },  // Orange   — Paper 4
+  { color: '#be123c', bgLight: '#fff1f2', bgTint: '#be123c18' },  // Rose     — Paper 5
+  { color: '#0d9488', bgLight: '#f0fdfa', bgTint: '#0d948818' },  // Teal     — Paper 6
+  { color: '#ca8a04', bgLight: '#fefce8', bgTint: '#ca8a0418' },  // Amber    — Paper 7
+  { color: '#9333ea', bgLight: '#faf5ff', bgTint: '#9333ea18' },  // Purple   — Paper 8
+];
+
 
 export const SubjectsScreen: React.FC<SubjectsScreenProps> = ({ navigation }) => {
   const { activeExam, examSlug } = useExam();
@@ -1209,19 +1227,14 @@ export const SubjectsScreen: React.FC<SubjectsScreenProps> = ({ navigation }) =>
               };
 
               // 4. Render a single subject card with exam name badge & stage pill
-              const renderSubjectCard = (subject: Subject, index: number) => {
+              const renderSubjectCard = (subject: Subject, index: number, groupColor?: string, groupBgTint?: string) => {
                 const meta = SUBJECT_METAS[subject.slug] || getDefaultMeta(activeExam.name);
 
                 // Derive stage label generically from paper or stage data
                 let stageLabel = 'General';
-                let stageBgColor = '#ffffff';
                 
                 const stageKey = getSubjectStageKey(subject);
                 const stageConfig = activeExam.stages.find(st => st.key === stageKey);
-                
-                if (stageConfig) {
-                  stageBgColor = stageConfig.badgeColor + '08'; // 5% opacity tint
-                }
 
                 if (typeof subject.paperId === 'object' && subject.paperId) {
                   stageLabel = subject.paperId.name;
@@ -1229,10 +1242,14 @@ export const SubjectsScreen: React.FC<SubjectsScreenProps> = ({ navigation }) =>
                   stageLabel = stageConfig.label.replace(/^[^\w]*\s*/, '');
                 }
 
+                // Use group color for card accent (left border + bg tint), fall back to meta color
+                const cardAccentColor = groupColor || meta.color;
+                const cardBgColor = groupBgTint || '#ffffff';
+
                 return (
                   <TouchableOpacity
                     key={subject._id}
-                    style={[styles.subjectCard, { borderLeftColor: meta.color, backgroundColor: stageBgColor }]}
+                    style={[styles.subjectCard, { borderLeftColor: cardAccentColor, backgroundColor: cardBgColor }]}
                     onPress={() => handleSelectSubject(subject)}
                     activeOpacity={0.75}
                   >
@@ -1260,9 +1277,9 @@ export const SubjectsScreen: React.FC<SubjectsScreenProps> = ({ navigation }) =>
                           </Text>
                         </View>
 
-                        {/* 2. STAGE / PAPER PILL */}
-                        <View style={styles.subjectStagePill}>
-                          <Text style={styles.subjectStagePillText}>{stageLabel}</Text>
+                        {/* 2. STAGE / PAPER PILL — now colored with group color */}
+                        <View style={[styles.subjectStagePill, groupColor ? { backgroundColor: groupColor + '15', borderWidth: 1, borderColor: groupColor + '30' } : undefined]}>
+                          <Text style={[styles.subjectStagePillText, groupColor ? { color: groupColor } : undefined]}>{stageLabel}</Text>
                         </View>
 
                         {/* 3. METADATA PILL */}
@@ -1290,14 +1307,14 @@ export const SubjectsScreen: React.FC<SubjectsScreenProps> = ({ navigation }) =>
                     </Text>
 
                     <View style={styles.subjectCardFooter}>
-                      <View style={styles.pillarChip}>
-                        <Text style={styles.pillarChipText}>Module 0{index + 1}</Text>
+                      <View style={[styles.pillarChip, groupColor ? { backgroundColor: groupColor + '12', borderWidth: 1, borderColor: groupColor + '25' } : undefined]}>
+                        <Text style={[styles.pillarChipText, groupColor ? { color: groupColor, fontWeight: '700' } : undefined]}>Module {String(index + 1).padStart(2, '0')}</Text>
                       </View>
                       <View style={styles.exploreAction}>
-                        <Text style={[styles.exploreText, { color: meta.color }]}>
+                        <Text style={[styles.exploreText, { color: cardAccentColor }]}>
                           Select Topics
                         </Text>
-                        <Text style={[styles.exploreArrow, { color: meta.color }]}>
+                        <Text style={[styles.exploreArrow, { color: cardAccentColor }]}>
                           ›
                         </Text>
                       </View>
@@ -1312,11 +1329,15 @@ export const SubjectsScreen: React.FC<SubjectsScreenProps> = ({ navigation }) =>
                 title: string;
                 badge: string;
                 badgeColor: string;
+                groupColor: string;
+                groupBgLight: string;
+                groupBgTint: string;
                 desc: string;
                 subjects: Subject[];
               }> = [];
 
               // Generic stage-based section grouping (works for ANY exam)
+              let globalPaperIndex = 0; // Tracks paper position across all stages for color assignment
               for (const stageConfig of activeExam.stages) {
                 if (selectedStageTab !== 'ALL' && selectedStageTab !== stageConfig.key) continue;
 
@@ -1335,14 +1356,19 @@ export const SubjectsScreen: React.FC<SubjectsScreenProps> = ({ navigation }) =>
                 }
 
                 for (const [paperSlug, group] of paperGroups) {
+                  const paletteEntry = PAPER_GROUP_COLORS[globalPaperIndex % PAPER_GROUP_COLORS.length];
                   sectionsToRender.push({
                     id: `${stageConfig.key}-${paperSlug}`,
                     title: group.title,
                     badge: stageConfig.badge,
                     badgeColor: stageConfig.badgeColor,
+                    groupColor: paletteEntry.color,
+                    groupBgLight: paletteEntry.bgLight,
+                    groupBgTint: paletteEntry.bgTint,
                     desc: stageConfig.desc,
                     subjects: group.subjects,
                   });
+                  globalPaperIndex++;
                 }
               }
 
@@ -1420,30 +1446,43 @@ export const SubjectsScreen: React.FC<SubjectsScreenProps> = ({ navigation }) =>
                   {/* RENDER GROUPED SECTIONS */}
                   {sectionsToRender.map((section) => (
                     <View key={section.id} style={styles.stageSectionGroup}>
-                      {/* Section Header Card */}
-                      <View style={styles.stageGroupHeaderCard}>
+                      {/* Section Header Card — colored with group accent */}
+                      <View style={[
+                        styles.stageGroupHeaderCard,
+                        {
+                          borderLeftWidth: 4,
+                          borderLeftColor: section.groupColor,
+                          backgroundColor: section.groupBgLight + 'CC',
+                          borderColor: section.groupColor + '30',
+                        },
+                      ]}>
                         <View style={styles.stageGroupHeaderTop}>
                           <View
                             style={[
                               styles.stageGroupBadge,
-                              { backgroundColor: section.badgeColor + '18', borderColor: section.badgeColor + '40' },
+                              { backgroundColor: section.groupColor + '18', borderColor: section.groupColor + '40' },
                             ]}
                           >
-                            <Text style={[styles.stageGroupBadgeText, { color: section.badgeColor }]}>
+                            <Text style={[styles.stageGroupBadgeText, { color: section.groupColor }]}>
                               {section.badge}
                             </Text>
                           </View>
-                          <Text style={styles.stageGroupCountText}>
-                            {section.subjects.length} Subjects
-                          </Text>
+                          <View style={[
+                            styles.stageGroupCountPill,
+                            { backgroundColor: section.groupColor + '15', borderColor: section.groupColor + '35' },
+                          ]}>
+                            <Text style={[styles.stageGroupCountTextColored, { color: section.groupColor }]}>
+                              {section.subjects.length} Subjects
+                            </Text>
+                          </View>
                         </View>
                         <Text style={styles.stageGroupTitle}>{section.title}</Text>
                         <Text style={styles.stageGroupDesc}>{section.desc}</Text>
                       </View>
 
-                      {/* Section Subject Cards */}
+                      {/* Section Subject Cards — pass group color for visual identity */}
                       <View style={styles.cardsList}>
-                        {section.subjects.map((sub, idx) => renderSubjectCard(sub, idx))}
+                        {section.subjects.map((sub, idx) => renderSubjectCard(sub, idx, section.groupColor, section.groupBgTint))}
                       </View>
                     </View>
                   ))}
@@ -2743,6 +2782,17 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: '700',
     color: '#64748b',
+  },
+  stageGroupCountPill: {
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 8,
+    borderWidth: 1,
+  },
+  stageGroupCountTextColored: {
+    fontSize: 11,
+    fontWeight: '800',
+    letterSpacing: 0.3,
   },
   stageGroupTitle: {
     fontSize: 16,
