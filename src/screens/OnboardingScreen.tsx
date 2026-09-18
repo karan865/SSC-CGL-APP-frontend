@@ -35,10 +35,10 @@ const SLIDES: Slide[] = [
     badgeColor: '#60a5fa',
     badgeBg: 'rgba(59, 130, 246, 0.15)',
     icon: '🎯',
-    title: '2,300+ Premium\nQuestions',
+    title: 'Premium\nQuestions Bank',
     description:
-      'Master SSC CGL with authentic Tier-1 & Tier-2 PYQs, shortcut formulas, and instant step-by-step explanations.',
-    pills: ['📐 813 Quant', '🧩 556 Reasoning', '📖 506 English', '🌍 512 GA'],
+      'Master SSC CGL, JPSC and more with authentic PYQs, shortcut formulas, and instant step-by-step explanations.',
+    pills: ['📐 Quant & Reasoning', '📖 English & GS', '🗺️ State Specific GK'],
   },
   {
     id: '2',
@@ -48,8 +48,8 @@ const SLIDES: Slide[] = [
     icon: '🏆',
     title: 'Real Exam Mock\nSimulator',
     description:
-      'Experience the real exam pressure with actual 60-minute countdown timers, official +2 / -0.5 marking, and question palettes.',
-    pills: ['⚡ 100 Qs / 60 Min Tier-1', '📊 Instant Scorecard', '🔍 Step-by-Step Review'],
+      'Experience the real exam pressure with actual countdown timers, official marking schemes, and exact question palettes.',
+    pills: ['⚡ Real Time Limits', '📊 Instant Scorecard', '🔍 Step-by-Step Review'],
   },
   {
     id: '3',
@@ -60,7 +60,7 @@ const SLIDES: Slide[] = [
     title: 'Smart Weakness\nTracker & Streaks',
     description:
       'Target low-accuracy topics automatically. Build unbroken daily study streaks and monitor your average solving speed.',
-    pills: ['🎯 Weak Area Focus', '🔥 5-Day Study Streaks', '⏱️ Speed Tracking (sec/Q)'],
+    pills: ['🎯 Weak Area Focus', '🔥 5-Day Study Streaks', '⏱️ Speed Tracking'],
   },
   {
     id: '4',
@@ -68,10 +68,10 @@ const SLIDES: Slide[] = [
     badgeColor: '#c084fc',
     badgeBg: 'rgba(192, 132, 252, 0.15)',
     icon: '🌟',
-    title: 'Ready to Ace\nSSC CGL?',
+    title: 'Ready to Ace\nYour Exams?',
     description:
-      'All 2,387 questions, topic tests, full-length mocks, and bookmark revisions are ready for you. Let’s begin!',
-    pills: ['✅ Tier 1 & Tier 2 Ready', '📱 Offline-Friendly', '💡 100% Free Practice'],
+      'Thousands of questions, topic tests, full-length mocks, and bookmark revisions are ready for you. Let’s begin!',
+    pills: ['✅ Multi-Exam Ready', '📱 Offline-Friendly', '💡 100% Free Practice'],
   },
 ];
 
@@ -177,7 +177,7 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ navigation }
 
       {/* Top Header: App Name & Skip */}
       <View style={styles.topBar}>
-        <Text style={styles.brandTitle}>🎯 SSC CGL Prep</Text>
+        <Text style={styles.brandTitle}>🎯 Exam Prep</Text>
         {!isLastSlide ? (
           <TouchableOpacity onPress={handleGetStarted} hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}>
             <Text style={styles.skipText}>Skip</Text>
