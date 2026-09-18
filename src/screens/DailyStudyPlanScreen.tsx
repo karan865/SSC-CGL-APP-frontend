@@ -97,6 +97,7 @@ export const DailyStudyPlanScreen: React.FC<DailyStudyPlanScreenProps> = ({
         difficulty: 'Medium',
         questionCount: item.remainingCount || item.questionCount,
         studyPlanItemId: item.id,
+        examId: examSlug,
       });
     } else {
       // WEAK_TOPIC, RECOMMENDED, BALANCED_PRACTICE
@@ -107,6 +108,7 @@ export const DailyStudyPlanScreen: React.FC<DailyStudyPlanScreenProps> = ({
         difficulty: item.difficulty || 'Medium',
         questionCount: item.remainingCount || item.questionCount,
         studyPlanItemId: item.id,
+        examId: examSlug,
       });
     }
   };

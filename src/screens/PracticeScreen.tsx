@@ -11,6 +11,7 @@ import {
   TextStyle,
 } from 'react-native';
 import { PracticeScreenProps } from '../navigation/types';
+import { useExam } from '../context/ExamContext';
 import { practiceApi } from '../services/api/practiceApi';
 import { mockTestApi } from '../services/api/mockTestApi';
 import { Question, OptionChoice, AnswerResponse, SelectionInfo } from '../types/question';
@@ -23,8 +24,10 @@ export const PracticeScreen: React.FC<PracticeScreenProps> = ({
   route,
   navigation,
 }) => {
-  const { subjectId, topicId, topicName, difficulty, questionCount = 5, studyPlanItemId } =
+  const { subjectId, topicId, topicName, difficulty, questionCount = 5, studyPlanItemId, examId: routeExamId } =
     route.params;
+  const { examSlug } = useExam();
+  const resolvedExamId = routeExamId || examSlug;
 
   const { language, isHindi, isBoth } = useLanguage();
 
@@ -51,6 +54,7 @@ export const PracticeScreen: React.FC<PracticeScreenProps> = ({
         topicId,
         difficulty,
         count: questionCount,
+        examId: resolvedExamId,
       });
 
       if (!response.questions || response.questions.length === 0) {

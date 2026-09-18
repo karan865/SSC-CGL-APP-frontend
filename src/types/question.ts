@@ -40,6 +40,7 @@ export interface StartPracticeParams {
   topicId: string;
   difficulty: Difficulty;
   count?: number;
+  examId?: string;
 }
 
 export interface SubmitAnswerParams {

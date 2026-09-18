@@ -25,6 +25,7 @@ export type RootStackParamList = {
     difficulty: Difficulty;
     questionCount?: number;
     studyPlanItemId?: string;
+    examId?: string;
   };
   Result: TestResultData;
   MockInstructions: { examSlug?: string; paperSlug?: string } | undefined;
